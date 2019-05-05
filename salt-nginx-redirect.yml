@@ -1,0 +1,16 @@
+#nginx upstream redirect node
+
+nginx:
+  server:
+    site:
+      nginx_proxy_site01:
+        enabled: true
+        type: nginx_proxy
+        name: brentWTWsite01
+        proxy:
+          host: www.brentmdaviesWTW.com 
+          port: 3200
+          protocol: http
+        host:
+          name: localhost
+          port: 3400
