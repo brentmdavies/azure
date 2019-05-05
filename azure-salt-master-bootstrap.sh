@@ -91,6 +91,7 @@ az vm create \
     --admin-username brentmdavies \
     --generate-ssh-keys
 
+#ssh azureuser@mysaltmaster.westus2.cloudapp.azure.com
 #Install Salt and InfoSec tools
 apt-get install salt-api salt-cloud salt-master salt-minion salt-ssh salt-syndice fail2ban sendmail iptables-persistent apt-transport-https lsb-release gnupg -y
 
@@ -109,32 +110,32 @@ service fail2ban start
 mkdir /srv/salt
 
 #Manual azure salt provider. Will Jinja template in the future
-vim /etc/salt/cloud.providers.d/azure.conf
-my-azure-provider:
-  driver: azure
-  subscription_id: ff768d5f-440a-4922-bf92-3f30ec0a0df5
-  certificate_path: /etc/salt/azure.pem
-
-  minion:
-    master: mysaltmaster.westus.cloudapp.azure.com
+#vim /etc/salt/cloud.providers.d/azure.conf
+#my-azure-provider:
+#  driver: azure
+#  subscription_id: ff768d5f-440a-4922-bf92-3f30ec0a0df5
+#  certificate_path: /etc/salt/azure.pem
+#
+#  minion:
+#    master: mysaltmaster.westus.cloudapp.azure.com
 
 #Generate SSL certs
 openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout /etc/salt/azure.pem -out /etc/salt/azure.pem
 openssl x509 -inform pem -in /etc/salt/azure.pem -outform der -out /etc/salt/azure.cer
 
-vim /etc/salt/cloud.profiles.d/azure.conf 
-azure-ubuntu:
-  provider: my-azure-provider
-  image: 'b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu-16_04-LTS-amd64-server-20171121.1-en-us-30GB'
-  size: Small
-  location: 'West US'
-  ssh_username: brentmin
-  ssh_password: eb20c74f281de8c746307e46fdf15103
-  media_link: 'https://mysaltstorage.blob.core.windows.net/vhds'
-  virtual_network_name: saltVnet
-  subnet_name: minionSubnet
-  security_group: minionSecurityGroup
-  slot: production
+#vim /etc/salt/cloud.profiles.d/azure.conf 
+#azure-ubuntu:
+#  provider: my-azure-provider
+#  image: 'b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu-16_04-LTS-amd64-server-20171121.1-en-us-30GB'
+#  size: Small
+#  location: 'West US'
+#  ssh_username: brentmin
+#  ssh_password: eb20c74f281de8c746307e46fdf15103
+#  media_link: 'https://mysaltstorage.blob.core.windows.net/vhds'
+#  virtual_network_name: saltVnet
+#  subnet_name: minionSubnet
+#  security_group: minionSecurityGroup
+#  slot: production
 
 salt-cloud -p azure-ubuntu myMinionVM
 salt-key -a myMinionVM
